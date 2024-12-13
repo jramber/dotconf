@@ -45,10 +45,12 @@ final_space = true
 
     [[blocks.segments]]
         type = 'git'
-        style = 'plain'
-        foreground = 'p:os'
-        background = 'transparent'
-        template = '{{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }}'
+        style = 'powerline'
+        powerline_symbol = '█'
+        leading_powerline_symbol = ''
+        foreground = 'p:background'
+        background = 'p:pink'
+        template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} @{{ printf "%.7s" .Commit.Sha }}'
         
         [blocks.segments.properties]
             branch_icon = ''
@@ -59,7 +61,7 @@ final_space = true
 [palette]
     os = "#ACB0BE"
     closer = "p:os"
-    pink = "#F5C2E7"
+    pink = "#f4b8e4"
     lavender = "#B4BEFE"
     blue = "#89B4FA"
     mauve = '#cba6f7'
