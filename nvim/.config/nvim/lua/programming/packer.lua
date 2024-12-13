@@ -20,6 +20,7 @@ return require('packer').startup(function(use)
 
   -- Treesitter
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
+
   -- Harpoon
   use('theprimeagen/harpoon')
 

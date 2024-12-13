@@ -21,3 +21,11 @@ Then, install Tmux Package Manager (TPM) following the repo instructions. To ins
     <prefix>I
 ´´´
 
+## Nvim configuration
+
+In order for LSP and Mason to install all the server languages you will need to install `npm` first. To o so, run the following command:
+
+´´´
+    sudo apt install npm
+´´´
+
