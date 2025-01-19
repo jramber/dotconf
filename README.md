@@ -65,11 +65,6 @@ Alternative you can do:
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which kitty) 40
 ```
 
-## Dependecies
-
-* `npm`
-* `ripgrep`
-
 ## Copilot
 
 To use copilot you need to run the following command, and follow the instructions, inside nvim:
@@ -77,3 +72,19 @@ To use copilot you need to run the following command, and follow the instruction
 ```bash
     :Copilot setup
 ```
+
+## Biome
+
+To format and lint files you can use `biome`. To install it, you can do the following:
+
+```bash
+    sudo npm install -g @biomejs/biome
+```
+
+Once you have it installed, you can install the LSP and formatter via Mason.
+
+## Dependecies
+
+* `npm`
+* `ripgrep`
+* `biome`
