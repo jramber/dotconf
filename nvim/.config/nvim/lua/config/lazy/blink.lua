@@ -29,5 +29,19 @@ return {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
     },
     --]]
-  },
+
+    completion = {
+        ghost_text = {
+            enabled = true,
+        },
+        accept = {
+            auto_brackets = {
+                enabled = true,
+            }
+        }
+    },
+    signature = {
+        enabled = true,
+    }
+    },
 }
