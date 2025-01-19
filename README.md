@@ -48,3 +48,16 @@ Alternative you can do:
 ´´´
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which kitty) 40
 ´´´
+
+## Dependecies
+
+* `npm`
+* `ripgrep`
+
+## Copilot
+
+To use copilot you need to run the following command, and follow the instructions, inside nvim:
+
+```bash
+    :Copilot setup
+```

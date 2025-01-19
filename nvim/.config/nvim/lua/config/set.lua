@@ -21,6 +21,9 @@ vim.opt.scrolloff = 8
 
 vim.opt.colorcolumn = "80"
 
+vim.opt.termguicolors = true
+
+-- This could be ignore
 vim.g.mapleader = " "
 
 

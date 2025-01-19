@@ -1,5 +1,7 @@
 nvim/.config/nvim/plugin/packer_compiled.lua
-tmux/.config/tmux/plugins/tmux/
+
+tmux/.config/tmux/plugins/tmux/*
+!tmux/.config/tmux/plugins/tmux/themes/*
 
 # For mac
 .DS_Store
