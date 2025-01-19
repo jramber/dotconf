@@ -48,6 +48,7 @@ end
 
 M.setup = function()
     vim.keymap.set("n", "<leader>fg", live_multigrep)
+    vim.keymap.set({'n', 'v'}, "<leader>tg", require("telescope.builtin").grep_string)
 end
 
 return M
