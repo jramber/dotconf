@@ -20,7 +20,6 @@ return {
     --]]
     config = function()
         vim.keymap.set("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
-        --[[
         require("gitblame").setup {
             enabled = 0,
             message_template = "<date> - <author> - <summary> - <<sha>>",
@@ -28,6 +27,5 @@ return {
             virtual_text_column = 0,
             display_virtual_text = 0,
         }
-        --]]
     end
 }
