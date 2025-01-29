@@ -1,5 +1,3 @@
-vim.g.gitblame_display_virtual_text = 0;
-
 return {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
