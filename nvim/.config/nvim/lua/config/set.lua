@@ -26,4 +26,4 @@ vim.opt.termguicolors = true
 -- This could be ignore
 vim.g.mapleader = " "
 
-
+vim.opt.foldmethod = "indent"
