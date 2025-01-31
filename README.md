@@ -83,6 +83,10 @@ To format and lint files you can use `biome`. To install it, you can do the foll
 
 Once you have it installed, you can install the LSP and formatter via Mason.
 
+## ZSH
+
+Zsh configuration requires `Zinit` package manager
+
 ## Dependecies
 
 * `npm`
