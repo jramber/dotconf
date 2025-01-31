@@ -5,11 +5,14 @@ return {
         lazy = false,
         priority = 1000,
         config = function()
-            -- require("catppuccin").setup({
-            --     flavour = "latte"
-            -- })
-            -- vim.cmd([[colorscheme catppuccin]])
-            vim.cmd("colorscheme catppuccin")
+            require("catppuccin").setup({
+                -- flavour = "latte",
+                flavour = "mocha",
+                transparent_background = true
+
+            })
+            vim.cmd([[colorscheme catppuccin]])
+            -- vim.cmd("colorscheme catppuccin")
         end
     },
 }
