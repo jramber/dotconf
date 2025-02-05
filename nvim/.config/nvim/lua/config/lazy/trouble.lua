@@ -3,6 +3,7 @@ return {
     -- for default options, refer to the configuration section for custom setup.
     opts = {
         auto_refresh = false,
+        auto_preview = false,
     },
     cmd = "Trouble",
     keys = {

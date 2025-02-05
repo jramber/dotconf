@@ -76,8 +76,7 @@ M.setup = function()
     vim.keymap.set('n', "<C-p>", function()
         local opts = require("telescope.themes").get_dropdown({})
         git_diff_grep(opts)
-    end
-    )
+    end)
 end
 
 return M
