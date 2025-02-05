@@ -30,6 +30,7 @@ return {
         }
 
         local capabilities = require('blink.cmp').get_lsp_capabilities()
+        -- capabilities.offsetEncoding = { "utf-16" }
 
         require("mason").setup({
             PATH = "prepend", -- "skip" seems to cause the spawning error
@@ -56,28 +57,45 @@ return {
                         }
                     }
                 end,
-                --[[
                 ["biome"] = function()
                     local util = require("lspconfig").util
-                    cmd = { 'biome', 'lsp-proxy' }
-                    filetypes = {
-                        'astro',
-                        'css',
-                        'graphql',
-                        'javascript',
-                        'javascriptreact',
-                        'json',
-                        'jsonc',
-                        'svelte',
-                        'typescript',
-                        'typescript.tsx',
-                        'typescriptreact',
-                        'vue',
+                    require("lspconfig").biome.setup {
+                        cmd = { 'biome', 'lsp-proxy' },
+                        filetypes = {
+                            'astro',
+                            'css',
+                            'graphql',
+                            'javascript',
+                            'javascriptreact',
+                            'json',
+                            'jsonc',
+                            'svelte',
+                            'typescript',
+                            'typescript.tsx',
+                            'typescriptreact',
+                            'vue',
+                        },
+                        root_dir = util.root_pattern('biome.json', 'biome.jsonc'),
+                        single_file_support = false,
+                        capabilities = capabilities,
+                        settings = {
+                            biome = {
+                                formatter = { enabled = true },
+                                linter = { enabled = true }
+                            }
+                        }
                     }
-                    root_dir = util.root_pattern('biome.json', 'biome.jsonc')
-                    single_file_support = false
                 end,
-                --]]
+                ["ts_ls"] = function()
+                    require("lspconfig").ts_ls.setup {
+                        capabilities = capabilities,
+                        single_file_support = true,
+                        on_attach = function(client)
+                            client.server_capabilities.documentFormattingProvider = false -- Disable formatting
+                            client.server_capabilities.diagnosticProvider = false         -- Disable linting
+                        end,
+                    }
+                end
             }
         })
 
@@ -92,13 +110,13 @@ return {
 
                 --@diagnostic disable-next-line: missing-parameter
                 -- if client.supports_method('textDocument/formatting', 0) then
-                    -- Format the current buffer on save
-                    vim.api.nvim_create_autocmd('BufWritePre', {
-                        buffer = args.buf,
-                        callback = function()
-                            vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
-                        end,
-                    })
+                -- Format the current buffer on save
+                vim.api.nvim_create_autocmd('BufWritePre', {
+                    buffer = args.buf,
+                    callback = function()
+                        vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
+                    end,
+                })
                 --end
             end,
         })
