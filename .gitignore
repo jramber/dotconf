@@ -1,5 +1,4 @@
-tmux/.config/tmux/plugins/tmux/*
-!tmux/.config/tmux/plugins/tmux/themes/*
+tmux/.config/tmux/plugins/
 
 # For mac
 .DS_Store
