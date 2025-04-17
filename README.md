@@ -92,6 +92,14 @@ Once you have it installed, you can install the LSP and formatter via Mason.
 
 Zsh configuration requires `Zinit` package manager
 
+## Set Zsh as the default shell
+
+Run command:
+
+```bash
+chsh -s $(which zsh)
+```
+
 ## Dependecies
 
 * `npm`
