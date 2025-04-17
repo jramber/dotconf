@@ -16,6 +16,7 @@ return {
                 'rust_analyzer',
                 'lua_ls',
                 'biome',
+                'marksman'
             },
 
             -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed.
@@ -94,6 +95,12 @@ return {
                             client.server_capabilities.documentFormattingProvider = false -- Disable formatting
                             client.server_capabilities.diagnosticProvider = false         -- Disable linting
                         end,
+                    }
+                end,
+                ["marksman"] = function()
+                    require("lspconfig").marksman.setup {
+                        capabilities = capabilities,
+                        settings = {}
                     }
                 end
             }

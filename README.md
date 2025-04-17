@@ -1,4 +1,4 @@
-# SET UP
+# Dotconf setup
 
 This project use GNU Stow for the set up
 
@@ -24,11 +24,7 @@ Then, install Tmux Package Manager (TPM) following the repo instructions. To ins
 
 ## Nvim configuration
 
-In order for LSP and Mason to install all the server languages you will need to install `npm` first. To o so, run the following command:
-
-```bash
-    sudo apt install npm
-```
+### NeoVim
 
 If you want to install the `nightl` version of `nvim`, you can do so by pulling the repository on master and running the following commands:
 
@@ -44,6 +40,15 @@ If you encounter any issues you can try the following
     make deps
 ```
 
+### LSP
+
+In order for LSP and Mason to install all the server languages you will need to install `npm` first. To o so, run the following command:
+
+```bash
+    sudo apt install npm
+```
+
+> In order to run the LSP languages, remember that you need to install the LSP language server first.
 
 ## Kitty configuration
 
