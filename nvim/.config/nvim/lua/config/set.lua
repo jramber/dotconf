@@ -7,7 +7,7 @@ vim.opt.nu = true
 vim.opt.relativenumber = true
 
 vim.opt.smartindent = true
--- vim.opt.foldmethod = 'indent'
+vim.opt.foldmethod = "indent"
 
 vim.opt.wrap = false
 
@@ -25,5 +25,3 @@ vim.opt.termguicolors = true
 
 -- This could be ignore
 vim.g.mapleader = " "
-
-vim.opt.foldmethod = "indent"
