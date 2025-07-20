@@ -16,3 +16,13 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zshconfig.toml)"
 
 # Disable auto titles
 DISABLE_AUTO_TITLE=true
+
+export PATH=$HOME/Dev/pullsys/:$PATH
+
+# pull system alias
+alias pullsys="$HOME/Dev/pullsys/pullsys"
+
+# mvn setup
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion # We use zsh ma boy
