@@ -6,7 +6,7 @@ return {
         require('lualine').setup {
             options = {
                 icons_enabled = false,
-                theme = 'catppuccin',
+                theme = 'onelight',
                 -- component_separators = { left = '', right = '' },
                 -- section_separators = { left = '', right = '' },
                 component_separators = { left = '│', right = '│' },
@@ -30,8 +30,10 @@ return {
                 lualine_b = { 'branch', 'diff', 'diagnostics' },
                 -- lualine_c = { { 'filename', path = 1 } },
                 lualine_c = {
-                    { 'filename',                       path = 1,                                cond = function() return not
-                        git_blame.is_blame_text_available() end },
+                    { 'filename', path = 1, cond = function()
+                        return not
+                            git_blame.is_blame_text_available()
+                    end },
                     { git_blame.get_current_blame_text, cond = git_blame.is_blame_text_available }
                 },
                 -- git_blame
