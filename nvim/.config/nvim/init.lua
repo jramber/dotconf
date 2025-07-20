@@ -31,9 +31,9 @@ vim.pack.add({
     "https://github.com/windwp/nvim-autopairs",
     "https://github.com/f-person/git-blame.nvim",
     "https://github.com/folke/which-key.nvim",
-    "https://github.com/christoomey/vim-tmux-navigator",
+    "https://github.com/christoomey/vim-tmux-navigator", -- dep
     "https://github.com/nvim-lualine/lualine.nvim",
-    { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", version = "main" },
+    { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", version = "main" }, -- dep
     "https://github.com/nvim-telescope/telescope.nvim",
     { src = "https://github.com/theprimeagen/harpoon", version = "harpoon2"},
     "https://github.com/projekt0n/github-nvim-theme", -- theme
@@ -102,13 +102,90 @@ require("lualine").setup({
     inactive_winbar = {},
     extensions = {}
 })
+local function build_fzf_native()
+    local fzf_native_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/telescope-fzf-native.nvim"
+    if vim.fn.isdirectory(fzf_native_path) == 1 and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.so") == 0 then
+        vim.system({ "make" }, { cwd = fzf_native_path })
+    end
+end
+build_fzf_native()
 require("telescope").setup({
+    build_step = function()
+    end,
     extensions = {
-        -- fzf = {}
+        fzf = {}
     }
 })
--- require('telescope').load_extension('fzf')
+require('telescope').load_extension('fzf')
+local pickers = require("telescope.pickers")
+local finders = require("telescope.finders")
+local make_entry = require("telescope.make_entry")
+local conf = require("telescope.config").values
+local git_command = require "telescope.utils".__git_command
+local live_multigrep = function(opts)
+    opts = opts or {}
+    opts.cwd = opts.cwd or vim.uv.cwd()
+
+    local finder = finders.new_async_job {
+        command_generator = function(prompt)
+            if not prompt or prompt == "" then
+                return nil
+            end
+
+            local pieces = vim.split(prompt, "  ")
+            local args = { "rg" }
+
+            if pieces[1] then
+                table.insert(args, "-e")
+                table.insert(args, pieces[1])
+            end
+
+            if pieces[2] then
+                table.insert(args, "-g")
+                table.insert(args, pieces[2])
+            end
+
+            return vim.tbl_flatten {
+                args,
+                { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" }
+            }
+        end,
+        entry_maker = make_entry.gen_from_vimgrep(opts),
+        cwd = opts.cwd,
+    }
+
+    pickers.new(opts, {
+        debounce = 100,
+        prompt_title = "Multi Grep",
+        finder = finder,
+        previewer = conf.grep_previewer(opts),
+        sorter = require("telescope.sorters").empty(),
+    }):find()
+end
+local git_diff_grep = function(opts)
+    opts         = opts or {}
+    opts.cwd     = opts.cwd or vim.uv.cwd()
+
+    local output = vim.fn.systemlist("git status --porcelain")
+    local files  = {}
+
+    for _, line in ipairs(output) do
+        table.insert(files, line:sub(4)) -- Remove the first three characters
+    end
+
+    pickers.new(opts, {
+        prompt_title = "Git Files",
+        __locations_input = true,
+        finder = finders.new_table({
+            results = files
+        }),
+        previewer = conf.grep_previewer(opts),
+        sorter = conf.file_sorter(opts),
+    }):find()
+end
+
 -- require "config.telescope.multigrep".setup()
+
 require('harpoon').setup({
     menu = {
         width = vim.api.nvim_win_get_width(0)- 4,
@@ -131,7 +208,6 @@ vim.cmd('colorscheme github_light_default')
 
 local map = vim.keymap.set
 local harpoon = require("harpoon")
-local builtin = require('telescope.builtin')
 map("n", "<leader>fs", "<cmd>Ex<CR>", { noremap = true, silent = true })
 map("n", "<M-j>", "<cmd>cnext<CR>") -- next quickfix item
 map("n", "<M-k>", "<cmd>cprev<CR>") -- previous quickfix item
@@ -144,7 +220,14 @@ map("n", "<C-s>", function() harpoon:list():select(4) end)
 map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 map("n", "<leader>a", function() harpoon:list():add() end)
 map("n", "<leader>A", function() harpoon:list():prepend() end)
-map('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+map('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
+-- vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Git files' })
+map("n", "<leader>fg", live_multigrep)
+map({ 'n', 'v' }, "<leader>tg", require("telescope.builtin").grep_string)
+map('n', "<C-p>", function()
+    local opts = require("telescope.themes").get_dropdown({})
+    git_diff_grep(opts)
+end)
 
 local capabilities = require('blink.cmp').get_lsp_capabilities()
 vim.lsp.config['luals'] = {
