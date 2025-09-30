@@ -40,6 +40,8 @@ If you encounter any issues you can try the following
     make deps
 ```
 
+> Remember to install `ripgrep` in order to be able to search with `telescope`
+
 ### LSP
 
 In order for LSP and Mason to install all the server languages you will need to install `npm` first. To o so, run the following command:
