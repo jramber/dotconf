@@ -1,3 +1,15 @@
+--[[
+    Juan David's minimal config
+    ===========================
+
+    design goals:
+        - single file
+        - use native nvim features
+        - use default keybindings unless painful otherwise
+        - use built-ins unless painful otherwise
+        - plugins must be integral to workflow
+]]
+
 -- TODO: add capabilities to the rest of lsp
 
 vim.opt.tabstop = 4
@@ -102,6 +114,8 @@ require("lualine").setup({
     inactive_winbar = {},
     extensions = {}
 })
+
+-- TODO: this funtion can be move inside
 local function build_fzf_native()
     local fzf_native_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/telescope-fzf-native.nvim"
     if vim.fn.isdirectory(fzf_native_path) == 1 and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.so") == 0 then
@@ -112,6 +126,11 @@ build_fzf_native()
 require("telescope").setup({
     build_step = function()
     end,
+    pickers = {
+        find_files = {
+            theme = "ivy"
+        }
+    },
     extensions = {
         fzf = {}
     }
@@ -184,13 +203,12 @@ local git_diff_grep = function(opts)
     }):find()
 end
 
--- require "config.telescope.multigrep".setup()
-
 require('harpoon').setup({
     menu = {
         width = vim.api.nvim_win_get_width(0)- 4,
     }
 })
+
 require("blink.cmp").setup({
     -- fuzzy = { implementation = "prefer_rust_with_warning" }
     appearence = {
@@ -222,7 +240,10 @@ map("n", "<leader>a", function() harpoon:list():add() end)
 map("n", "<leader>A", function() harpoon:list():prepend() end)
 map('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
 -- vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Git files' })
-map("n", "<leader>fg", live_multigrep)
+map("n", "<leader>fg", function()
+    local opts = require("telescope.themes").get_ivy({})
+    live_multigrep(opts)
+end)
 map({ 'n', 'v' }, "<leader>tg", require("telescope.builtin").grep_string)
 map('n', "<C-p>", function()
     local opts = require("telescope.themes").get_dropdown({})
@@ -247,6 +268,7 @@ vim.lsp.config['luals'] = {
       }
     }
 }
+
 local util = require('lspconfig.util')
 -- check https://github.com/neovim/nvim-lspconfig/blob/master/lsp/biome.lua#L12 for more informatoin
 vim.lsp.config['biome'] = {
