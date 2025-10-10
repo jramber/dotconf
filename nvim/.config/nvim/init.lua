@@ -22,6 +22,7 @@ vim.opt.smartindent = true
 -- vim.opt.foldmethod = 'indent'
 vim.opt.wrap = false
 vim.opt.list = true --show trailing characters
+vim.opt.listchars = { trail = "·", tab = "> ", space = "·"}
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.hlsearch = false
@@ -270,7 +271,7 @@ vim.lsp.config['luals'] = {
 }
 
 local util = require('lspconfig.util')
--- check https://github.com/neovim/nvim-lspconfig/blob/master/lsp/biome.lua#L12 for more informatoin
+-- check https://github.com/neovim/nvim-lspconfig/blob/master/lsp/biome.lua#L12 for more information
 vim.lsp.config['biome'] = {
     cmd = function(dispatchers, config)
       local cmd = 'biome'
@@ -305,11 +306,12 @@ vim.lsp.config['biome'] = {
     end,
     capabilities = capabilities
 }
--- vim.lsp.config['marksman'] = {
---     cmd = { "marksman" },
---     filetypes = { "markdown", "markdown.mdx" },
---     root_makers = { ".marksman.toml", ".git" }
--- }
+vim.lsp.config['marksman'] = {
+    cmd = { "marksman" },
+    filetypes = { "markdown", "markdown.mdx" },
+    root_makers = { ".marksman.toml", ".git" }
+}
+
 local function reload_workspace(bufnr)
     local clients = vim.lsp.get_clients { bufnr = bufnr, name = 'rust_analyzer' }
     for _, client in ipairs(clients) do
@@ -405,5 +407,80 @@ vim.lsp.config['rust-analyzer'] = {
       end, { desc = 'Reload current cargo workspace' })
     end,
 }
-vim.lsp.enable({'luals', 'biome', 'rust-analyzer'})
+
+vim.lsp.config['ts_ls'] = {
+  init_options = { hostInfo = 'neovim' },
+  cmd = { 'typescript-language-server', '--stdio' },
+  filetypes = {
+    'javascript',
+    'javascriptreact',
+    'javascript.jsx',
+    'typescript',
+    'typescriptreact',
+    'typescript.tsx',
+  },
+  root_dir = function(bufnr, on_dir)
+    local root_markers = { 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock' }
+    root_markers = vim.fn.has('nvim-0.11.3') == 1 and { root_markers, { '.git' } }
+      or vim.list_extend(root_markers, { '.git' })
+    local project_root = vim.fs.root(bufnr, root_markers) or vim.fn.getcwd()
+
+    on_dir(project_root)
+  end,
+  handlers = {
+    ['_typescript.rename'] = function(_, result, ctx)
+      local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+      vim.lsp.util.show_document({
+        uri = result.textDocument.uri,
+        range = {
+          start = result.position,
+          ['end'] = result.position,
+        },
+      }, client.offset_encoding)
+      vim.lsp.buf.rename()
+      return vim.NIL
+    end,
+  },
+  commands = {
+    ['editor.action.showReferences'] = function(command, ctx)
+      local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+      local file_uri, position, references = unpack(command.arguments)
+
+      local quickfix_items = vim.lsp.util.locations_to_items(references, client.offset_encoding)
+      vim.fn.setqflist({}, ' ', {
+        title = command.title,
+        items = quickfix_items,
+        context = {
+          command = command,
+          bufnr = ctx.bufnr,
+        },
+      })
+
+      vim.lsp.util.show_document({
+        uri = file_uri,
+        range = {
+          start = position,
+          ['end'] = position,
+        },
+      }, client.offset_encoding)
+
+      vim.cmd('botright copen')
+    end,
+  },
+  on_attach = function(client, bufnr)
+    vim.api.nvim_buf_create_user_command(bufnr, 'LspTypescriptSourceAction', function()
+      local source_actions = vim.tbl_filter(function(action)
+        return vim.startswith(action, 'source.')
+      end, client.server_capabilities.codeActionProvider.codeActionKinds)
+
+      vim.lsp.buf.code_action({
+        context = {
+          only = source_actions,
+        },
+      })
+    end, {})
+  end,
+}
+
+vim.lsp.enable({'luals', 'ts_ls'})
 
