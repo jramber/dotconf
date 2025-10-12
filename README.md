@@ -42,6 +42,13 @@ If you encounter any issues you can try the following
 
 > Remember to install `ripgrep` in order to be able to search with `telescope`
 
+
+### Blink.cmp
+
+For it to work without issues, you will need `cargo` and `rustup`. But most importantly, you might need to run `cargo build --release` where the blink package is installed. For linux it is at `/home/juanda/.local/share/nvim/site/pack/core/opt/blink.cmp`. Do not forget to look for `blink.cmp`.
+
+If you are not able to find it you might need to do something like tihs `find ~/.local/share/nvim/ -type d -name "blink.cmp"`
+
 ### LSP
 
 In order for LSP and Mason to install all the server languages you will need to install `npm` first. To o so, run the following command:

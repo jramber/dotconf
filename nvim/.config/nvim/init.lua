@@ -10,8 +10,6 @@
         - plugins must be integral to workflow
 ]]
 
--- TODO: add capabilities to the rest of lsp
-
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -211,15 +209,19 @@ require('harpoon').setup({
 })
 
 require("blink.cmp").setup({
-    -- fuzzy = { implementation = "prefer_rust_with_warning" }
+    keymap = { preset = 'default' },
     appearence = {
         use_nvim_cmp_as_default = true,
     },
     completion = {
-        ghost_text = { enabled = true },
-        accept = { auto_brackets = { enabled = true }},
-        signature = { enabled = true},
-    }
+        -- accept = { auto_brackets = { enabled = false }},
+        -- documentation = { enabled = true },
+        -- ghost_text = { enabled = true },
+        signature = {
+            enabled = true,
+        },
+    },
+    fuzzy = { implementation = "prefer_rust_with_warning" },
 })
 
 require("github-theme").setup({})
@@ -227,6 +229,9 @@ vim.cmd('colorscheme github_light_default')
 
 local map = vim.keymap.set
 local harpoon = require("harpoon")
+
+map('i', '<C-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+
 map("n", "<leader>fs", "<cmd>Ex<CR>", { noremap = true, silent = true })
 map("n", "<M-j>", "<cmd>cnext<CR>") -- next quickfix item
 map("n", "<M-k>", "<cmd>cprev<CR>") -- previous quickfix item
@@ -251,9 +256,12 @@ map('n', "<C-p>", function()
     git_diff_grep(opts)
 end)
 
-local capabilities = require('blink.cmp').get_lsp_capabilities()
+vim.lsp.config('*', {
+    capabilities = require('blink.cmp').get_lsp_capabilities(),
+    root_markers = { '.git' }
+})
+
 vim.lsp.config['luals'] = {
-    capabilities = capabilities,
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
     -- Nested lists indicate equal priority, see |vim.lsp.Config|.
@@ -304,7 +312,6 @@ vim.lsp.config['biome'] = {
       local root_dir = vim.fs.dirname(vim.fs.find(root_files, { path = fname, upward = true })[1])
       on_dir(root_dir)
     end,
-    capabilities = capabilities
 }
 vim.lsp.config['marksman'] = {
     cmd = { "marksman" },
@@ -343,7 +350,6 @@ end
 vim.lsp.config['rust-analyzer'] = {
     cmd = { 'rust-analyzer' },
     filetypes = { 'rust' },
-    capabilities = capabilities,
     root_dir = function(bufnr, on_dir)
       local fname = vim.api.nvim_buf_get_name(bufnr)
       local reused_dir = is_library(fname)
