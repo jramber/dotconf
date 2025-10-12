@@ -44,6 +44,8 @@ vim.pack.add {
     'https://github.com/christoomey/vim-tmux-navigator',
     'https://github.com/f-person/git-blame.nvim',
     'https://github.com/nvim-lualine/lualine.nvim',
+    { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", version = "main" }, -- dependency
+    "https://github.com/nvim-telescope/telescope.nvim",
 
 --   Themes
     'https://github.com/navarasu/onedark.nvim',
@@ -217,6 +219,72 @@ require'lualine'.setup {
     extensions = {}
 }
 
+local function build_fzf_native()
+    local fzf_native_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/telescope-fzf-native.nvim"
+    if vim.fn.isdirectory(fzf_native_path) == 1 and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.so") == 0 then
+        vim.system({ "make" }, { cwd = fzf_native_path })
+    end
+end
+build_fzf_native()
+require("telescope").setup({
+    build_step = function()
+    end,
+    pickers = {
+        find_files = {
+            theme = "ivy"
+        }
+    },
+    extensions = {
+        fzf = {}
+    }
+})
+require'telescope'.load_extension('fzf')
+local pickers = require'telescope.pickers'
+local finders = require'telescope.finders'
+local make_entry = require'telescope.make_entry'
+local conf = require'telescope.config'.values
+local git_command = require'telescope.utils'.__git_command
+local live_multigrep = function(opts)
+    opts = opts or {}
+    opts.cwd = opts.cwd or vim.uv.cwd()
+
+    local finder = finders.new_async_job {
+        command_generator = function(prompt)
+            if not prompt or prompt == "" then
+                return nil
+            end
+
+            local pieces = vim.split(prompt, "  ")
+            local args = { "rg" }
+
+            if pieces[1] then
+                table.insert(args, "-e")
+                table.insert(args, pieces[1])
+            end
+
+            if pieces[2] then
+                table.insert(args, "-g")
+                table.insert(args, pieces[2])
+            end
+
+            return vim.tbl_flatten {
+                args,
+                { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" }
+            }
+        end,
+        entry_maker = make_entry.gen_from_vimgrep(opts),
+        cwd = opts.cwd,
+    }
+
+    pickers.new(opts, {
+        debounce = 100,
+        prompt_title = "Multi Grep",
+        finder = finder,
+        previewer = conf.grep_previewer(opts),
+        sorter = require("telescope.sorters").empty(),
+    }):find()
+end
+
 local map = vim.keymap.set
 local harpoon = require'harpoon'
 -- map("n", "<leader>cs", function() vim.cmd.colorscheme 'catppuccin-macchiato' end)
@@ -227,6 +295,9 @@ map("n", "<C-s>", function() harpoon:list():select(4) end)
 map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 map("n", "<leader>a", function() harpoon:list():add() end)
 map("n", "<leader>A", function() harpoon:list():prepend() end)
+map('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
+map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy {}) end)
+map({ 'n', 'v' }, "<leader>tg", require("telescope.builtin").grep_string)
 map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
 
 --[[
