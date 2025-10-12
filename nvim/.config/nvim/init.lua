@@ -44,8 +44,9 @@ vim.pack.add {
     'https://github.com/christoomey/vim-tmux-navigator',
     'https://github.com/f-person/git-blame.nvim',
     'https://github.com/nvim-lualine/lualine.nvim',
-    { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", version = "main" }, -- dependency
-    "https://github.com/nvim-telescope/telescope.nvim",
+    { src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', version = 'main' }, -- dependency
+    'https://github.com/nvim-telescope/telescope.nvim',
+    'https://github.com/folke/trouble.nvim',
 
 --   Themes
     'https://github.com/navarasu/onedark.nvim',
@@ -56,8 +57,15 @@ vim.pack.add {
     'https://github.com/catppuccin/nvim',
 }
 
+require'trouble'.setup {}
+
 require'nvim-treesitter'.setup {}
 require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'lua', 'vimdoc' }
+
+vim.lsp.config('*', {
+    capabilities = require('blink.cmp').get_lsp_capabilities(),
+    root_markers = { '.git' }
+})
 
 vim.lsp.config('ts_ls', {
   init_options = { hostInfo = 'neovim' },
@@ -298,6 +306,7 @@ map("n", "<leader>A", function() harpoon:list():prepend() end)
 map('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
 map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy {}) end)
 map({ 'n', 'v' }, "<leader>tg", require("telescope.builtin").grep_string)
+map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
 map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
 
 --[[
