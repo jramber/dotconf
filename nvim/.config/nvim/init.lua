@@ -33,10 +33,27 @@ vim.opt.winborder = "rounded"
 vim.g.mapleader = " "
 
 vim.pack.add {
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = "main"},
     { src = 'https://github.com/neovim/nvim-lspconfig' },
     'https://github.com/rafamadriz/friendly-snippets', -- dependency
     'https://github.com/saghen/blink.cmp',
+    'https://github.com/windwp/nvim-autopairs',
+    -- 'https://github.com/folke/which-key.nvim',
+    'https://github.com/christoomey/vim-tmux-navigator',
+    'https://github.com/f-person/git-blame.nvim',
+    'https://github.com/nvim-lualine/lualine.nvim',
+
+--   Themes
+    'https://github.com/navarasu/onedark.nvim',
+    'https://github.com/rktjmp/lush.nvim', -- dep
+    'https://github.com/zenbones-theme/zenbones.nvim',
+    'https://github.com/folke/tokyonight.nvim',
+    'https://github.com/loctvl842/monokai-pro.nvim',
+    'https://github.com/catppuccin/nvim',
 }
+
+require'nvim-treesitter'.setup {}
+require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'lua', 'vimdoc' }
 
 vim.lsp.config('ts_ls', {
   init_options = { hostInfo = 'neovim' },
@@ -120,10 +137,19 @@ vim.lsp.config('ts_ls', {
     end, {})
   end,
 })
-
 vim.lsp.enable({'ts_ls'})
 
-require('blink.cmp').setup({
+require'gitblame'.setup {
+    enabled = 0,
+    message_template = "<date> - <author> - <summary> - <<sha>>",
+    date_format = "%m-%d-%Y %H:%M:%S",
+    virtual_text_column = 0,
+    display_virtual_text = 1,
+}
+
+require'nvim-autopairs'.setup {}
+
+require'blink.cmp'.setup {
     keymap = { preset = 'default' },
 
     appearance = {
@@ -133,5 +159,79 @@ require('blink.cmp').setup({
     completion = { documentation = { auto_show = false } },
     signature = { enabled = true },
     -- fuzzy = { implementation = "prefer_rust_with_warning" }
+}
+
+require'lualine'.setup {
+    options = {
+        icons_enabled = false,
+        theme = 'catppuccin-macchiato',
+        -- component_separators = { left = '', right = '' },
+        -- section_separators = { left = '', right = '' },
+        component_separators = { left = '│', right = '│' },
+        section_separators = { left = '', right = '' },
+        disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+        },
+        ignore_focus = {},
+        always_divide_middle = true,
+        always_show_tabline = true,
+        globalstatus = false,
+        refresh = {
+            statusline = 100,
+            tabline = 100,
+            winbar = 100,
+        }
+    },
+    sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_c = { { 'filename', path = 1 } },
+        -- lualine_c = {
+        --     { 'filename', path = 1, cond = function()
+        --         return not
+        --             git_blame.is_blame_text_available()
+        --     end },
+        --     { git_blame.get_current_blame_text, cond = git_blame.is_blame_text_available }
+        -- },
+        -- git_blame
+        -- lualine_x = { 'encoding', 'fileformat', 'filetype' },
+        -- lualine_x = { { git_blame.get_current_blame_text, cond = git_blame.is_blame_text_available }, 'filetype' },
+        lualine_x = { 'filetype' },
+        lualine_y = { 'progress' },
+        lualine_z = { 'location' }
+    },
+    inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = { 'filename' },
+        lualine_x = { 'location' },
+        lualine_y = {},
+        lualine_z = {}
+    },
+    tabline = {},
+    winbar = {},
+    inactive_winbar = {},
+    extensions = {}
+}
+
+local map = vim.keymap.set
+-- map("n", "<leader>cs", function() vim.cmd.colorscheme 'catppuccin-macchiato' end)
+
+
+--[[
+require('onedark').setup({
+    style = 'dark'
 })
+]]
+
+function SetColorScheme()
+    local color_scheme = 'catppuccin-macchiato'
+    -- vim.cmd.colorscheme  '...'
+    vim.cmd('colorscheme '  .. color_scheme)
+end
+
+-- vim.api.nvim_create_user_command('SetColorScheme', SetColorScheme, {})
+
+SetColorScheme()
 
