@@ -33,7 +33,9 @@ vim.opt.winborder = "rounded"
 vim.g.mapleader = " "
 
 vim.pack.add {
-    { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = "main"},
+    'https://github.com/nvim-lua/plenary.nvim',
+    { src = 'https://github.com/theprimeagen/harpoon', version = 'harpoon2'},
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = 'main'},
     { src = 'https://github.com/neovim/nvim-lspconfig' },
     'https://github.com/rafamadriz/friendly-snippets', -- dependency
     'https://github.com/saghen/blink.cmp',
@@ -216,8 +218,16 @@ require'lualine'.setup {
 }
 
 local map = vim.keymap.set
+local harpoon = require'harpoon'
 -- map("n", "<leader>cs", function() vim.cmd.colorscheme 'catppuccin-macchiato' end)
-
+map("n", "<C-h>", function() harpoon:list():select(1) end)
+map("n", "<C-t>", function() harpoon:list():select(2) end)
+map("n", "<C-n>", function() harpoon:list():select(3) end)
+map("n", "<C-s>", function() harpoon:list():select(4) end)
+map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+map("n", "<leader>a", function() harpoon:list():add() end)
+map("n", "<leader>A", function() harpoon:list():prepend() end)
+map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
 
 --[[
 require('onedark').setup({
