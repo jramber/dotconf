@@ -56,6 +56,7 @@ vim.pack.add {
     'https://github.com/catppuccin/nvim',
     -- Git
     'https://github.com/lewis6991/gitsigns.nvim',
+    'https://github.com/tpope/vim-fugitive',
 }
 
 require'trouble'.setup {}
