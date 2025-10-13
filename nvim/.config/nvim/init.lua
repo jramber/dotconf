@@ -40,7 +40,7 @@ vim.pack.add {
     'https://github.com/rafamadriz/friendly-snippets', -- dependency
     'https://github.com/saghen/blink.cmp',
     'https://github.com/windwp/nvim-autopairs',
-    -- 'https://github.com/folke/which-key.nvim',
+    'https://github.com/folke/which-key.nvim',
     'https://github.com/christoomey/vim-tmux-navigator',
     'https://github.com/f-person/git-blame.nvim',
     'https://github.com/nvim-lualine/lualine.nvim',
