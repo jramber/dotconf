@@ -47,7 +47,6 @@ vim.pack.add {
     { src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', version = 'main' }, -- dependency
     'https://github.com/nvim-telescope/telescope.nvim',
     'https://github.com/folke/trouble.nvim',
-
 --   Themes
     'https://github.com/navarasu/onedark.nvim',
     'https://github.com/rktjmp/lush.nvim', -- dep
@@ -55,6 +54,8 @@ vim.pack.add {
     'https://github.com/folke/tokyonight.nvim',
     'https://github.com/loctvl842/monokai-pro.nvim',
     'https://github.com/catppuccin/nvim',
+    -- Git
+    'https://github.com/lewis6991/gitsigns.nvim',
 }
 
 require'trouble'.setup {}
@@ -66,94 +67,146 @@ vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
     root_markers = { '.git' }
 })
-
+vim.lsp.config['luals'] = {
+    cmd = { 'lua-language-server' },
+    filetypes = { 'lua' },
+    root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' }, -- Nested lists indicate equal priority, see |vim.lsp.Config|.
+    settings = {
+      Lua = {
+        runtime = {
+          version = 'LuaJIT',
+        },
+        diagnostics = {
+            globals = { 'vim' }
+        }
+      }
+    }
+}
+vim.lsp.config['biome'] = {
+    cmd = function(dispatchers, config)
+      local cmd = 'biome'
+      local local_cmd = (config or {}).root_dir and config.root_dir .. '/node_modules/.bin/biome'
+      if local_cmd and vim.fn.executable(local_cmd) == 1 then
+        cmd = local_cmd
+      end
+      return vim.lsp.rpc.start({ cmd, 'lsp-proxy' }, dispatchers)
+    end,
+    filetypes = {
+      'astro',
+      'css',
+      'graphql',
+      'html',
+      'javascript',
+      'javascriptreact',
+      'json',
+      'jsonc',
+      'svelte',
+      'typescript',
+      'typescript.tsx',
+      'typescriptreact',
+      'vue',
+    },
+    workspace_required = true,
+    root_dir = function(bufnr, on_dir)
+      local fname = vim.api.nvim_buf_get_name(bufnr)
+      local root_files = { 'biome.json', 'biome.jsonc' }
+      root_files = util.insert_package_json(root_files, 'biome', fname)
+      local root_dir = vim.fs.dirname(vim.fs.find(root_files, { path = fname, upward = true })[1])
+      on_dir(root_dir)
+    end,
+}
+vim.lsp.config['marksman'] = {
+    cmd = { "marksman" },
+    filetypes = { "markdown", "markdown.mdx" },
+    root_makers = { ".marksman.toml", ".git" }
+}
 vim.lsp.config('ts_ls', {
-  init_options = { hostInfo = 'neovim' },
-  cmd = { 'typescript-language-server', '--stdio' },
-  filetypes = {
-    'javascript',
-    'javascriptreact',
-    'javascript.jsx',
-    'typescript',
-    'typescriptreact',
-    'typescript.tsx',
-  },
-  root_dir = function(bufnr, on_dir)
-    -- The project root is where the LSP can be started from
-    -- As stated in the documentation above, this LSP supports monorepos and simple projects.
-    -- We select then from the project root, which is identified by the presence of a package
-    -- manager lock file.
-    local root_markers = { 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock' }
-    -- Give the root markers equal priority by wrapping them in a table
-    root_markers = vim.fn.has('nvim-0.11.3') == 1 and { root_markers, { '.git' } }
-      or vim.list_extend(root_markers, { '.git' })
-    -- We fallback to the current working directory if no project root is found
-    local project_root = vim.fs.root(bufnr, root_markers) or vim.fn.getcwd()
+      init_options = { hostInfo = 'neovim' },
+      cmd = { 'typescript-language-server', '--stdio' },
+      filetypes = {
+        'javascript',
+        'javascriptreact',
+        'javascript.jsx',
+        'typescript',
+        'typescriptreact',
+        'typescript.tsx',
+      },
+      root_dir = function(bufnr, on_dir)
+        -- The project root is where the LSP can be started from
+        -- As stated in the documentation above, this LSP supports monorepos and simple projects.
+        -- We select then from the project root, which is identified by the presence of a package
+        -- manager lock file.
+        local root_markers = { 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock' }
+        -- Give the root markers equal priority by wrapping them in a table
+        root_markers = vim.fn.has('nvim-0.11.3') == 1 and { root_markers, { '.git' } }
+          or vim.list_extend(root_markers, { '.git' })
+        -- We fallback to the current working directory if no project root is found
+        local project_root = vim.fs.root(bufnr, root_markers) or vim.fn.getcwd()
 
-    on_dir(project_root)
-  end,
-  handlers = {
-    -- handle rename request for certain code actions like extracting functions / types
-    ['_typescript.rename'] = function(_, result, ctx)
-      local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
-      vim.lsp.util.show_document({
-        uri = result.textDocument.uri,
-        range = {
-          start = result.position,
-          ['end'] = result.position,
-        },
-      }, client.offset_encoding)
-      vim.lsp.buf.rename()
-      return vim.NIL
-    end,
-  },
-  commands = {
-    ['editor.action.showReferences'] = function(command, ctx)
-      local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
-      local file_uri, position, references = unpack(command.arguments)
+        on_dir(project_root)
+      end,
+      handlers = {
+        -- handle rename request for certain code actions like extracting functions / types
+        ['_typescript.rename'] = function(_, result, ctx)
+          local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+          vim.lsp.util.show_document({
+            uri = result.textDocument.uri,
+            range = {
+              start = result.position,
+              ['end'] = result.position,
+            },
+          }, client.offset_encoding)
+          vim.lsp.buf.rename()
+          return vim.NIL
+        end,
+      },
+      commands = {
+        ['editor.action.showReferences'] = function(command, ctx)
+          local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+          local file_uri, position, references = unpack(command.arguments)
 
-      local quickfix_items = vim.lsp.util.locations_to_items(references, client.offset_encoding)
-      vim.fn.setqflist({}, ' ', {
-        title = command.title,
-        items = quickfix_items,
-        context = {
-          command = command,
-          bufnr = ctx.bufnr,
-        },
-      })
+          local quickfix_items = vim.lsp.util.locations_to_items(references, client.offset_encoding)
+          vim.fn.setqflist({}, ' ', {
+            title = command.title,
+            items = quickfix_items,
+            context = {
+              command = command,
+              bufnr = ctx.bufnr,
+            },
+          })
 
-      vim.lsp.util.show_document({
-        uri = file_uri,
-        range = {
-          start = position,
-          ['end'] = position,
-        },
-      }, client.offset_encoding)
+          vim.lsp.util.show_document({
+            uri = file_uri,
+            range = {
+              start = position,
+              ['end'] = position,
+            },
+          }, client.offset_encoding)
 
-      vim.cmd('botright copen')
-    end,
-  },
-  on_attach = function(client, bufnr)
-    -- ts_ls provides `source.*` code actions that apply to the whole file. These only appear in
-    -- `vim.lsp.buf.code_action()` if specified in `context.only`.
-    vim.api.nvim_buf_create_user_command(bufnr, 'LspTypescriptSourceAction', function()
-      local source_actions = vim.tbl_filter(function(action)
-        return vim.startswith(action, 'source.')
-      end, client.server_capabilities.codeActionProvider.codeActionKinds)
+          vim.cmd('botright copen')
+        end,
+      },
+      on_attach = function(client, bufnr)
+        -- ts_ls provides `source.*` code actions that apply to the whole file. These only appear in
+        -- `vim.lsp.buf.code_action()` if specified in `context.only`.
+        vim.api.nvim_buf_create_user_command(bufnr, 'LspTypescriptSourceAction', function()
+          local source_actions = vim.tbl_filter(function(action)
+            return vim.startswith(action, 'source.')
+          end, client.server_capabilities.codeActionProvider.codeActionKinds)
 
-      vim.lsp.buf.code_action({
-        context = {
-          only = source_actions,
-        },
-      })
-    end, {})
-  end,
+          vim.lsp.buf.code_action({
+            context = {
+              only = source_actions,
+            },
+          })
+        end, {})
+      end,
 })
-vim.lsp.enable({'ts_ls'})
+vim.lsp.enable({'luals', 'ts_ls'})
 
 require'gitblame'.setup {
-    enabled = 0,
-    message_template = "<date> - <author> - <summary> - <<sha>>",
+    enabled = 1,
+    message_template = "<author> - <<sha>> - <summary> - <date>",
     date_format = "%m-%d-%Y %H:%M:%S",
     virtual_text_column = 0,
     display_virtual_text = 1,
@@ -163,22 +216,22 @@ require'nvim-autopairs'.setup {}
 
 require'blink.cmp'.setup {
     keymap = { preset = 'default' },
-
     appearance = {
-      nerd_font_variant = 'mono'
+      nerd_font_variant = 'mono',
+      use_nvim_cmp_as_default = true,
     },
-
-    completion = { documentation = { auto_show = false } },
+    completion = {
+        documentation = { auto_show = true },
+        ghost_text = { enabled = true }
+    },
     signature = { enabled = true },
-    -- fuzzy = { implementation = "prefer_rust_with_warning" }
+    fuzzy = { implementation = "prefer_rust_with_warning" }
 }
 
 require'lualine'.setup {
     options = {
         icons_enabled = false,
-        theme = 'catppuccin-macchiato',
-        -- component_separators = { left = '', right = '' },
-        -- section_separators = { left = '', right = '' },
+        theme = 'tokyonight',
         component_separators = { left = '│', right = '│' },
         section_separators = { left = '', right = '' },
         disabled_filetypes = {
@@ -234,7 +287,7 @@ local function build_fzf_native()
     end
 end
 build_fzf_native()
-require("telescope").setup({
+require'telescope'.setup {
     build_step = function()
     end,
     pickers = {
@@ -245,7 +298,7 @@ require("telescope").setup({
     extensions = {
         fzf = {}
     }
-})
+}
 require'telescope'.load_extension('fzf')
 local pickers = require'telescope.pickers'
 local finders = require'telescope.finders'
@@ -295,7 +348,6 @@ end
 
 local map = vim.keymap.set
 local harpoon = require'harpoon'
--- map("n", "<leader>cs", function() vim.cmd.colorscheme 'catppuccin-macchiato' end)
 map("n", "<C-h>", function() harpoon:list():select(1) end)
 map("n", "<C-t>", function() harpoon:list():select(2) end)
 map("n", "<C-n>", function() harpoon:list():select(3) end)
@@ -303,9 +355,9 @@ map("n", "<C-s>", function() harpoon:list():select(4) end)
 map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 map("n", "<leader>a", function() harpoon:list():add() end)
 map("n", "<leader>A", function() harpoon:list():prepend() end)
-map('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
+map('n', '<leader>ff', require'telescope.builtin'.find_files, { desc = 'Telescope find files' })
 map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy {}) end)
-map({ 'n', 'v' }, "<leader>tg", require("telescope.builtin").grep_string)
+map({ 'n', 'v' }, "<leader>tg", require'telescope.builtin'.grep_string)
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
 map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
 
@@ -316,12 +368,10 @@ require('onedark').setup({
 ]]
 
 function SetColorScheme()
-    local color_scheme = 'catppuccin-macchiato'
     -- vim.cmd.colorscheme  '...'
+    local color_scheme = 'tokyonight'
     vim.cmd('colorscheme '  .. color_scheme)
 end
-
 -- vim.api.nvim_create_user_command('SetColorScheme', SetColorScheme, {})
-
 SetColorScheme()
 
