@@ -60,11 +60,14 @@ vim.pack.add {
     -- 'https://github.com/kdheepak/lazygit.nvim',
 }
 
-require'trouble'.setup {}
+require'trouble'.setup {
+    win = {
+        size = { width = 0.2 },
+  },
+}
 
 require'nvim-treesitter'.setup {}
--- require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'cpp', 'python', 'lua', 'vimdoc' }
-require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'lua', 'vimdoc' }
+require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'cpp', 'python', 'lua', 'vimdoc' }
 
 vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
@@ -510,6 +513,10 @@ map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_i
 map({ 'n', 'v' }, "<leader>tg", require'telescope.builtin'.grep_string)
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
 map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
+
+-- :lua vim.lsp.buf. ...
+-- map("n", "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<CR>")
+map("n", "<leader>cs", "<cmd>Trouble symbols toggle<CR>")
 
 --[[
 require('onedark').setup({
