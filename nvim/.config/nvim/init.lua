@@ -54,6 +54,7 @@ vim.pack.add {
     'https://github.com/folke/tokyonight.nvim',
     'https://github.com/loctvl842/monokai-pro.nvim',
     'https://github.com/catppuccin/nvim',
+    'https://github.com/projekt0n/github-nvim-theme',
 --   Git
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/tpope/vim-fugitive',
