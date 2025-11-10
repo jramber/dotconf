@@ -37,9 +37,7 @@ vim.opt.termguicolors = true -- Enable 24bits color
 vim.opt.autoread = true --  Auto update the file if changed externally
 vim.opt.lazyredraw = true -- faster scroll
 -- vim.opt.showmode = false
--- vim.opt.winborder = "rounded"
-
--- vim.cmd("colorscheme tokyonight")
+vim.opt.winborder = "single"
 
 vim.pack.add {
     -- navigation
@@ -50,23 +48,21 @@ vim.pack.add {
     { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = 'main'},
     -- lsp
     { src = 'https://github.com/neovim/nvim-lspconfig' },
-    { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
-    { src = "https://github.com/mason-org/mason.nvim" },
-    { src = "https://github.com/neovim/nvim-lspconfig" },
-    { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
+    -- { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
+    -- { src = "https://github.com/mason-org/mason.nvim" },
+    -- { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 
     -- completion
     { src = 'https://github.com/rafamadriz/friendly-snippets' }, -- dependency
     { src = 'https://github.com/L3MON4D3/LuaSnip' },
     { src = 'https://github.com/saghen/blink.cmp' },
     -- 'https://github.com/folke/which-key.nvim',
+    -- TODO: could be simplified
     -- tmux
     { src ='https://github.com/christoomey/vim-tmux-navigator'},
     -- telescope
     { src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', version = 'main' }, -- dependency
     'https://github.com/nvim-telescope/telescope.nvim',
-    -- diagnostics
-    { src = 'https://github.com/folke/trouble.nvim'},
     -- Themes
     { src = 'https://github.com/navarasu/onedark.nvim' },
     { src = 'https://github.com/rktjmp/lush.nvim' }, -- dep
@@ -118,15 +114,15 @@ require'nvim-treesitter'.install {
 }
 
 
-require("mason").setup()
-require("mason-lspconfig").setup({})
-require("mason-tool-installer").setup({
-  ensure_installed = {
-    "lua_ls",
-  },
-  auto_update = false,
-  run_on_start = true,
-})
+-- require("mason").setup()
+-- require("mason-lspconfig").setup({})
+-- require("mason-tool-installer").setup({
+--   ensure_installed = {
+--     "lua_ls",
+--   },
+--   auto_update = false,
+--   run_on_start = true,
+-- })
 
 vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
@@ -148,35 +144,6 @@ vim.lsp.config['luals'] = {
     }
 }
 
--- LspAttach keymaps
-vim.api.nvim_create_autocmd(
-  "LspAttach",
-  { --  Use LspAttach autocommand to only map the following keys after the language server attaches to the current buffer
-    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-    callback = function(ev)
-      vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc" -- Enable completion triggered by <c-x><c-o>
-
-      local opts = { buffer = ev.buf }
-      vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "<leader><space>", vim.lsp.buf.hover, opts)
-      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-      vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-
-      -- vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
-      vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-
-      vim.keymap.set("n", "<leader>d", function()
-        vim.diagnostic.open_float({
-          border = "rounded",
-        })
-      end, opts)
-    end,
-  }
-)
-
---[[
 vim.lsp.config['biome'] = {
     cmd = function(dispatchers, config)
       local cmd = 'biome'
@@ -444,40 +411,11 @@ vim.lsp.config('rust-analyzer', {
     end, { desc = 'Reload current cargo workspace' })
   end,
 })
--- vim.lsp.enable({'luals', 'ts_ls', 'marksman', 'pyright', 'rust_analyzer'})
-]]
-
-vim.lsp.enable({'luals'})
-
---[[
-require'blink.cmp'.setup {
-    -- keymap = { preset = 'default' },
-    -- appearance = {
-    --   nerd_font_variant = 'mono',
-    --   use_nvim_cmp_as_default = true,
-    -- },
-    completion = {
-        documentation = { auto_show = true },
-        ghost_text = { enabled = true }
-    },
-    signature = { enabled = true },
-    fuzzy = { implementation = "prefer_rust_with_warning" }
-}
-]]
+vim.lsp.enable({'luals', 'ts_ls', 'marksman', 'pyright', 'rust_analyzer'})
 
 require("luasnip.loaders.from_vscode").lazy_load()
 require'blink.cmp'.setup {
     snippets = { preset = "luasnip" },
-    keymap = {
-      preset = "default",
-      ["<CR>"] = { "accept", "fallback" },
-      ["<C-Space>"] = { "show" },
-      ["<Down>"] = { "select_next", "fallback" },
-      ["<Up>"] = { "select_prev", "fallback" },
-    },
-    appearance = {
-      nerd_font_variant = "mono",
-    },
     signature = { enabled = true },
     completion = {
       documentation = { auto_show = true, auto_show_delay_ms = 500 },
@@ -508,11 +446,15 @@ local function build_fzf_native()
 end
 build_fzf_native()
 require'telescope'.setup {
+    defaults = {
+        border = false,
+    },
     build_step = function()
     end,
     pickers = {
         find_files = {
-            theme = "ivy"
+            theme = "ivy",
+            border = false
         }
     },
     extensions = {
@@ -566,6 +508,35 @@ local live_multigrep = function(opts)
     }):find()
 end
 
+-- TODO: review keymaps
+-- LspAttach keymaps
+vim.api.nvim_create_autocmd(
+  "LspAttach",
+  { --  Use LspAttach autocommand to only map the following keys after the language server attaches to the current buffer
+    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+    callback = function(ev)
+      vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc" -- Enable completion triggered by <c-x><c-o>
+
+      local opts = { buffer = ev.buf }
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "<leader><space>", vim.lsp.buf.hover, opts)
+      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+      vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+
+      -- vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
+      vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+
+      vim.keymap.set("n", "<leader>d", function()
+        vim.diagnostic.open_float({
+          border = "rounded",
+        })
+      end, opts)
+    end,
+  }
+)
+
 local map = vim.keymap.set
 local harpoon = require'harpoon'
 map("n", "<C-h>", function() harpoon:list():select(1) end)
@@ -576,7 +547,7 @@ map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 map("n", "<leader>a", function() harpoon:list():add() end)
 map("n", "<leader>A", function() harpoon:list():prepend() end)
 map('n', '<leader>ff', require'telescope.builtin'.find_files, { desc = 'Telescope find files' })
-map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy {}) end)
+map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy { border = false }) end)
 map({ 'n', 'v' }, "<leader>tg", require'telescope.builtin'.grep_string)
 -- quickfix and location list naviagtion
 map("n", "<C-k>", "<cmd>cnext<CR>zz")
