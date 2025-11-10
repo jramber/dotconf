@@ -10,13 +10,17 @@
         - plugins must be integral to workflow
 ]]
 
+vim.g.mapleader = " "
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.nu = true
 vim.opt.relativenumber = true
+vim.opt.foldmethod = "indent"
 vim.opt.smartindent = true
+vim.opt.autoindent = true
+vim.opt.breakindent = true
 -- vim.opt.foldmethod = 'indent'
 vim.opt.wrap = false
 vim.opt.list = true --show trailing characters
@@ -27,47 +31,67 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.opt.colorcolumn = "80,120"
-vim.opt.termguicolors = true
-vim.opt.foldmethod = "indent"
-vim.opt.winborder = "rounded"
-vim.g.mapleader = " "
+vim.opt.cursorline = true
+vim.opt.mouse="a"
+vim.opt.termguicolors = true -- Enable 24bits color
+vim.opt.autoread = true --  Auto update the file if changed externally
+vim.opt.lazyredraw = true -- faster scroll
+-- vim.opt.showmode = false
+-- vim.opt.winborder = "rounded"
+
+-- vim.cmd("colorscheme tokyonight")
 
 vim.pack.add {
-    'https://github.com/nvim-lua/plenary.nvim',
+    -- navigation
+    'https://github.com/nvim-lua/plenary.nvim', -- dep
     { src = 'https://github.com/theprimeagen/harpoon', version = 'harpoon2'},
+
+    -- treesitter
     { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = 'main'},
+    -- lsp
     { src = 'https://github.com/neovim/nvim-lspconfig' },
-    'https://github.com/rafamadriz/friendly-snippets', -- dependency
-    'https://github.com/saghen/blink.cmp',
-    'https://github.com/windwp/nvim-autopairs',
-    'https://github.com/folke/which-key.nvim',
-    'https://github.com/christoomey/vim-tmux-navigator',
-    'https://github.com/f-person/git-blame.nvim',
-    'https://github.com/nvim-lualine/lualine.nvim',
+    { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
+    { src = "https://github.com/mason-org/mason.nvim" },
+    { src = "https://github.com/neovim/nvim-lspconfig" },
+    { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
+
+    -- completion
+    { src = 'https://github.com/rafamadriz/friendly-snippets' }, -- dependency
+    { src = 'https://github.com/L3MON4D3/LuaSnip' },
+    { src = 'https://github.com/saghen/blink.cmp' },
+    -- 'https://github.com/folke/which-key.nvim',
+    -- tmux
+    { src ='https://github.com/christoomey/vim-tmux-navigator'},
+    -- telescope
     { src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', version = 'main' }, -- dependency
     'https://github.com/nvim-telescope/telescope.nvim',
-    'https://github.com/folke/trouble.nvim',
-    -- 'https://github.com/folke/twilight.nvim',
+    -- diagnostics
+    { src = 'https://github.com/folke/trouble.nvim'},
     -- Themes
-    'https://github.com/navarasu/onedark.nvim',
-    'https://github.com/rktjmp/lush.nvim', -- dep
-    'https://github.com/zenbones-theme/zenbones.nvim',
-    'https://github.com/folke/tokyonight.nvim',
-    'https://github.com/loctvl842/monokai-pro.nvim',
-    'https://github.com/catppuccin/nvim',
-    'https://github.com/projekt0n/github-nvim-theme',
+    { src = 'https://github.com/navarasu/onedark.nvim' },
+    { src = 'https://github.com/rktjmp/lush.nvim' }, -- dep
+    { src = 'https://github.com/zenbones-theme/zenbones.nvim' },
+    { src = 'https://github.com/folke/tokyonight.nvim' },
+    { src = 'https://github.com/loctvl842/monokai-pro.nvim' },
+    { src = 'https://github.com/catppuccin/nvim' },
+    { src = 'https://github.com/projekt0n/github-nvim-theme' },
     -- Git
-    'https://github.com/lewis6991/gitsigns.nvim',
-    'https://github.com/tpope/vim-fugitive',
-    'https://github.com/kdheepak/lazygit.nvim',
+    { src = 'https://github.com/lewis6991/gitsigns.nvim' },
+    { src = 'https://github.com/tpope/vim-fugitive' },
+    { src = 'https://github.com/kdheepak/lazygit.nvim' },
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
+    -- HTML
+    { src ="https://github.com/windwp/nvim-ts-autotag" },
+    -- zen mode
+    { src = 'https://github.com/folke/twilight.nvim'},
 }
 
-require'trouble'.setup {
-    win = {
-        size = { width = 0.2 },
-  },
+
+require'nvim-ts-autotag'.setup {}
+
+require'gitsigns'.setup {
+    current_line_blame = true,
 }
 
 --[[
@@ -93,8 +117,46 @@ require'trouble'.setup {
     }
 ]]
 
-require'nvim-treesitter'.setup {}
-require'nvim-treesitter'.install { 'rust', 'javascript', 'typescript', 'c', 'cpp', 'python', 'lua', 'vimdoc' }
+require'nvim-treesitter'.setup {
+    auto_install = true,
+    sync_install = false,
+    indent = {
+        enable = true,
+    },
+    autopairs = {
+        enable = true,
+    }
+}
+require'nvim-treesitter'.install {
+    -- web
+    'javascript',
+    'typescript',
+    'tsx',
+    'html',
+    'css',
+    'json',
+    -- 
+    'markdown',
+    'rust',
+    'c',
+    'cpp',
+    'python',
+    'lua',
+    'luadoc',
+    'vim',
+    'vimdoc',
+}
+
+
+require("mason").setup()
+require("mason-lspconfig").setup({})
+require("mason-tool-installer").setup({
+  ensure_installed = {
+    "lua_ls",
+  },
+  auto_update = false,
+  run_on_start = true,
+})
 
 vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
@@ -110,11 +172,41 @@ vim.lsp.config['luals'] = {
           version = 'LuaJIT',
         },
         diagnostics = {
-            globals = { 'vim' }
+            globals = { 'vim', 'require' }
         }
       }
     }
 }
+
+-- LspAttach keymaps
+vim.api.nvim_create_autocmd(
+  "LspAttach",
+  { --  Use LspAttach autocommand to only map the following keys after the language server attaches to the current buffer
+    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+    callback = function(ev)
+      vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc" -- Enable completion triggered by <c-x><c-o>
+
+      local opts = { buffer = ev.buf }
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "<leader><space>", vim.lsp.buf.hover, opts)
+      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+      vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+
+      -- vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
+      vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+
+      vim.keymap.set("n", "<leader>d", function()
+        vim.diagnostic.open_float({
+          border = "rounded",
+        })
+      end, opts)
+    end,
+  }
+)
+
+--[[
 vim.lsp.config['biome'] = {
     cmd = function(dispatchers, config)
       local cmd = 'biome'
@@ -382,24 +474,18 @@ vim.lsp.config('rust-analyzer', {
     end, { desc = 'Reload current cargo workspace' })
   end,
 })
-vim.lsp.enable({'luals', 'ts_ls', 'marksman', 'pyright', 'rust_analyzer'})
+-- vim.lsp.enable({'luals', 'ts_ls', 'marksman', 'pyright', 'rust_analyzer'})
+]]
 
-require'gitblame'.setup {
-    enabled = 1,
-    message_template = "<author> - <<sha>> - <summary> - <date>",
-    date_format = "%m-%d-%Y %H:%M:%S",
-    virtual_text_column = 0,
-    display_virtual_text = 1,
-}
+vim.lsp.enable({'luals'})
 
-require'nvim-autopairs'.setup {}
-
+--[[
 require'blink.cmp'.setup {
-    keymap = { preset = 'default' },
-    appearance = {
-      nerd_font_variant = 'mono',
-      use_nvim_cmp_as_default = true,
-    },
+    -- keymap = { preset = 'default' },
+    -- appearance = {
+    --   nerd_font_variant = 'mono',
+    --   use_nvim_cmp_as_default = true,
+    -- },
     completion = {
         documentation = { auto_show = true },
         ghost_text = { enabled = true }
@@ -407,57 +493,41 @@ require'blink.cmp'.setup {
     signature = { enabled = true },
     fuzzy = { implementation = "prefer_rust_with_warning" }
 }
+]]
 
-require'lualine'.setup {
-    options = {
-        icons_enabled = false,
-        theme = 'tokyonight',
-        component_separators = { left = '│', right = '│' },
-        section_separators = { left = '', right = '' },
-        disabled_filetypes = {
-            statusline = {},
-            winbar = {},
+require("luasnip.loaders.from_vscode").lazy_load()
+require'blink.cmp'.setup {
+    snippets = { preset = "luasnip" },
+    keymap = {
+      preset = "default",
+      ["<CR>"] = { "accept", "fallback" },
+      ["<C-Space>"] = { "show" },
+      ["<Down>"] = { "select_next", "fallback" },
+      ["<Up>"] = { "select_prev", "fallback" },
+    },
+    appearance = {
+      nerd_font_variant = "mono",
+    },
+    signature = { enabled = true },
+    completion = {
+      documentation = { auto_show = true, auto_show_delay_ms = 500 },
+      menu = {
+        auto_show = true,
+        draw = {
+          treesitter = { "lsp" },
+          columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind" } },
         },
-        ignore_focus = {},
-        always_divide_middle = true,
-        always_show_tabline = true,
-        globalstatus = false,
-        refresh = {
-            statusline = 100,
-            tabline = 100,
-            winbar = 100,
-        }
+      },
     },
-    sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { 'branch', 'diff', 'diagnostics' },
-        lualine_c = { { 'filename', path = 1 } },
-        -- lualine_c = {
-        --     { 'filename', path = 1, cond = function()
-        --         return not
-        --             git_blame.is_blame_text_available()
-        --     end },
-        --     { git_blame.get_current_blame_text, cond = git_blame.is_blame_text_available }
-        -- },
-        -- git_blame
-        -- lualine_x = { 'encoding', 'fileformat', 'filetype' },
-        -- lualine_x = { { git_blame.get_current_blame_text, cond = git_blame.is_blame_text_available }, 'filetype' },
-        lualine_x = { 'filetype' },
-        lualine_y = { 'progress' },
-        lualine_z = { 'location' }
+    sources = {
+      default = {
+        "lsp",
+        "path",
+        "snippets",
+        "buffer",
+      },
     },
-    inactive_sections = {
-        lualine_a = {},
-        lualine_b = {},
-        lualine_c = { 'filename' },
-        lualine_x = { 'location' },
-        lualine_y = {},
-        lualine_z = {}
-    },
-    tabline = {},
-    winbar = {},
-    inactive_winbar = {},
-    extensions = {}
+    fuzzy = { implementation = "prefer_rust_with_warning" },
 }
 
 local function build_fzf_native()
@@ -538,18 +608,88 @@ map("n", "<leader>A", function() harpoon:list():prepend() end)
 map('n', '<leader>ff', require'telescope.builtin'.find_files, { desc = 'Telescope find files' })
 map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy {}) end)
 map({ 'n', 'v' }, "<leader>tg", require'telescope.builtin'.grep_string)
-map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
-map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { noremap = true, silent = true })
+-- quickfix and location list naviagtion
+map("n", "<C-k>", "<cmd>cnext<CR>zz")
+map("n", "<C-j>", "<cmd>cprev<CR>zz")
+map("n", "<leader>k", "<cmd>lnext<CR>zz")
+map("n", "<leader>j", "<cmd>lprev<CR>zz")
+-- Source nvim config changes
+map("n", "<leader>so", ":update<CR> :source<CR>")
+-- Save and quit current file quicker
+map("n", "<leader>w", ":w<cr>", { silent = false, noremap = true })
+map({ "n", "t" }, "<leader>q", ":q<cr>", { silent = false, noremap = true })
+-- Yank to system clipboard
+map("n", "<leader>y", '"+y')
+map("v", "<leader>y", '"+y')
+map("n", "<leader>Y", '"+Y')
+-- Open buffer to the right
+map("n", "<leader>v", ":vsplit<CR>")
+-- Move selection up and down
+map("v", "<C-Down>", ":m '>+1<CR>gv=gv")
+map("v", "<C-Up>", ":m '<-2<CR>gv=gv")
 
--- :lua vim.lsp.buf. ...
--- map("n", "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<CR>")
-map("n", "<leader>cs", "<cmd>Trouble symbols toggle<CR>")
+map('n', '<leader>qs', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
 
---[[
-require('onedark').setup({
-    style = 'dark'
+vim.cmd("set completeopt+=noselect")
+
+-- vim.api.nvim_create_autocmd("LspAttach", {
+-- 	callback = function(ev)
+-- 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+-- 		if client ~= nil and client:supports_method("textDocument/completion") then
+-- 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+-- 		end
+-- 	end,
+-- })
+
+-- Highlight yank
+vim.api.nvim_create_autocmd("textyankpost", {
+  group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
+  pattern = "*",
+  desc = "highlight selection on yank",
+  callback = function()
+    vim.highlight.on_yank({ timeout = 200, visual = true })
+  end,
 })
-]]
+-- no auto continue comments on new line
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("no_auto_comment", {}),
+	callback = function()
+		vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+	end,
+})
+
+-- ide like highlight when stopping cursor
+vim.api.nvim_create_autocmd("CursorMoved", {
+	group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
+	desc = "Highlight references under cursor",
+	callback = function()
+		-- Only run if the cursor is not in insert mode
+		if vim.fn.mode() ~= "i" then
+			local clients = vim.lsp.get_clients({ bufnr = 0 })
+			local supports_highlight = false
+			for _, client in ipairs(clients) do
+				if client.server_capabilities.documentHighlightProvider then
+					supports_highlight = true
+					break -- Found a supporting client, no need to check others
+				end
+			end
+
+			if supports_highlight then
+				vim.lsp.buf.clear_references()
+				vim.lsp.buf.document_highlight()
+			end
+		end
+	end,
+})
+
+-- ide like highlight when stopping cursor
+vim.api.nvim_create_autocmd("CursorMovedI", {
+	group = "LspReferenceHighlight",
+	desc = "Clear highlights when entering insert mode",
+	callback = function()
+		vim.lsp.buf.clear_references()
+	end,
+})
 
 function SetColorScheme()
     -- vim.cmd.colorscheme  '...'
@@ -557,5 +697,5 @@ function SetColorScheme()
     vim.cmd('colorscheme '  .. color_scheme)
 end
 -- vim.api.nvim_create_user_command('SetColorScheme', SetColorScheme, {})
+--
 SetColorScheme()
-
