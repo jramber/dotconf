@@ -81,12 +81,7 @@ vim.pack.add {
     { src = 'https://github.com/kdheepak/lazygit.nvim' },
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
-    -- HTML
-    { src ="https://github.com/windwp/nvim-ts-autotag" },
 }
-
-
-require'nvim-ts-autotag'.setup {}
 
 require'gitsigns'.setup {
     current_line_blame = true,
