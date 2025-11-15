@@ -37,7 +37,7 @@ vim.opt.termguicolors = true -- Enable 24bits color
 vim.opt.autoread = true --  Auto update the file if changed externally
 vim.opt.lazyredraw = true -- faster scroll
 -- vim.opt.showmode = false
-vim.opt.winborder = "single"
+-- vim.opt.winborder = "single"
 
 vim.pack.add {
     -- navigation
