@@ -57,6 +57,7 @@ vim.pack.add {
     { src = 'https://github.com/L3MON4D3/LuaSnip' },
     { src = 'https://github.com/saghen/blink.cmp' },
     -- 'https://github.com/folke/which-key.nvim',
+    { src = 'https://github.com/windwp/nvim-autopairs' },
     -- TODO: could be simplified
     -- tmux
     { src ='https://github.com/christoomey/vim-tmux-navigator'},
@@ -79,6 +80,14 @@ vim.pack.add {
     -- 'https://github.com/jesseduffield/lazydocker'
 }
 
+-- TODO: organice setup
+
+-- navigation
+-- treesitter
+-- ...
+-- completion
+require'nvim-autopairs'.setup {}
+
 require'gitsigns'.setup {
     current_line_blame = true,
 }
@@ -89,9 +98,6 @@ require'nvim-treesitter'.setup {
     indent = {
         enable = true,
     },
-    autopairs = {
-        enable = true,
-    }
 }
 require'nvim-treesitter'.install {
     -- web
