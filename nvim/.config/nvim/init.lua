@@ -78,7 +78,11 @@ vim.pack.add {
     { src = 'https://github.com/kdheepak/lazygit.nvim' },
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
+    -- Quickfix
+    { src = 'https://github.com/stevearc/quicker.nvim'},
 }
+
+require'quicker'.setup {}
 
 -- TODO: organice setup
 
