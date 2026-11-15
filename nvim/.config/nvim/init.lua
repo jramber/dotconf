@@ -512,7 +512,6 @@ local live_multigrep = function(opts)
     }):find()
 end
 
--- TODO: review keymaps
 -- LspAttach keymaps
 vim.api.nvim_create_autocmd(
   "LspAttach",
@@ -565,7 +564,6 @@ map("n", "<leader>h", ":split<CR>")
 -- Move selection up and down
 map("v", "<C-Down>", ":m '>+1<CR>gv=gv")
 map("v", "<C-Up>", ":m '<-2<CR>gv=gv")
-map("n", "K", vim.lsp.buf.hover, 'Hover documentation')
 
 map('n', '<leader>qs', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
 
