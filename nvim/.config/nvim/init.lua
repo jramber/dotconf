@@ -1,6 +1,6 @@
 --[[
-    Juan David's minimal config
-    ===========================
+    Juan David's minimal config's philosophy
+    ========================================
 
     design goals:
         - single file
@@ -24,13 +24,13 @@ vim.opt.breakindent = true
 -- vim.opt.foldmethod = 'indent'
 vim.opt.wrap = false
 vim.opt.list = true --show trailing characters
-vim.opt.listchars = { trail = "·", tab = "> ", space = "·"}
+vim.opt.listchars = { trail = "@", tab = "> ", space = "·"}
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.scrolloff = 8
-vim.opt.colorcolumn = "80,120"
+vim.opt.colorcolumn = "80,120" -- Should be in accordance with the theme
 vim.opt.cursorline = true
 vim.opt.mouse="a"
 vim.opt.termguicolors = true -- Enable 24bits color
@@ -79,7 +79,9 @@ vim.pack.add {
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
     -- Quickfix
-    { src = 'https://github.com/stevearc/quicker.nvim'},
+    { src = 'https://github.com/stevearc/quicker.nvim' },
+    -- surround
+    { src = "https://github.com/kylechui/nvim-surround" }
 }
 
 require'quicker'.setup {}
@@ -138,6 +140,7 @@ vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
     root_markers = { '.git' }
 })
+
 vim.lsp.config['luals'] = {
     cmd = { 'lua-language-server' },
     filetypes = { 'lua' },
@@ -289,6 +292,7 @@ local function set_python_path(command)
     client:notify('workspace/didChangeConfiguration', { settings = nil })
   end
 end
+
 vim.lsp.config('pyright', {
   cmd = { 'pyright-langserver', '--stdio' },
   filetypes = { 'python' },
@@ -653,3 +657,4 @@ SetColorScheme()
 
 -- Change the color of the folds
 vim.cmd("highlight Folded guifg=#b7c1e3 guibg=#2D3047")
+
