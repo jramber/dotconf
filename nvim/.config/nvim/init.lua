@@ -644,9 +644,12 @@ vim.api.nvim_create_autocmd("CursorMovedI", {
 
 function SetColorScheme()
     -- vim.cmd.colorscheme  '...'
-    local color_scheme = 'tokyonight'
+    local color_scheme = 'tokyonight-night'
     vim.cmd('colorscheme '  .. color_scheme)
 end
 -- vim.api.nvim_create_user_command('SetColorScheme', SetColorScheme, {})
 --
 SetColorScheme()
+
+-- Change the color of the folds
+vim.cmd("highlight Folded guifg=#b7c1e3 guibg=#2D3047")
