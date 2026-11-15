@@ -561,9 +561,11 @@ map("v", "<leader>y", '"+y')
 map("n", "<leader>Y", '"+Y')
 -- Open buffer to the right
 map("n", "<leader>v", ":vsplit<CR>")
+map("n", "<leader>h", ":split<CR>")
 -- Move selection up and down
 map("v", "<C-Down>", ":m '>+1<CR>gv=gv")
 map("v", "<C-Up>", ":m '<-2<CR>gv=gv")
+map("n", "K", vim.lsp.buf.hover, 'Hover documentation')
 
 map('n', '<leader>qs', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
 
