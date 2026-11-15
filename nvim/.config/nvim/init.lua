@@ -40,25 +40,17 @@ vim.opt.lazyredraw = true -- faster scroll
 -- vim.opt.winborder = "single"
 
 vim.pack.add {
-    -- navigation
     'https://github.com/nvim-lua/plenary.nvim', -- dep
-    { src = 'https://github.com/theprimeagen/harpoon', version = 'harpoon2'},
-
     -- treesitter
     { src = 'https://github.com/nvim-treesitter/nvim-treesitter', version = 'main'},
     -- lsp
     { src = 'https://github.com/neovim/nvim-lspconfig' },
-    -- { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
-    -- { src = "https://github.com/mason-org/mason.nvim" },
-    -- { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
-
     -- completion
     { src = 'https://github.com/rafamadriz/friendly-snippets' }, -- dependency
     { src = 'https://github.com/L3MON4D3/LuaSnip' },
     { src = 'https://github.com/saghen/blink.cmp' },
     -- 'https://github.com/folke/which-key.nvim',
     { src = 'https://github.com/windwp/nvim-autopairs' },
-    -- TODO: could be simplified
     -- tmux
     { src ='https://github.com/christoomey/vim-tmux-navigator'},
     -- telescope
@@ -66,10 +58,7 @@ vim.pack.add {
     'https://github.com/nvim-telescope/telescope.nvim',
     -- Themes
     { src = 'https://github.com/navarasu/onedark.nvim' },
-    { src = 'https://github.com/rktjmp/lush.nvim' }, -- dep
-    { src = 'https://github.com/zenbones-theme/zenbones.nvim' },
     { src = 'https://github.com/folke/tokyonight.nvim' },
-    { src = 'https://github.com/loctvl842/monokai-pro.nvim' },
     { src = 'https://github.com/catppuccin/nvim' },
     { src = 'https://github.com/projekt0n/github-nvim-theme' },
     -- Git
@@ -79,19 +68,17 @@ vim.pack.add {
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
     -- Quickfix
-    { src = 'https://github.com/stevearc/quicker.nvim' },
+    -- { src = 'https://github.com/stevearc/quicker.nvim' },
     -- surround
     { src = "https://github.com/kylechui/nvim-surround" }
 }
 
-require'quicker'.setup {}
+require'onedark'.setup {
+    style = 'darker'
+}
 
--- TODO: organice setup
+-- require'quicker'.setup {}
 
--- navigation
--- treesitter
--- ...
--- completion
 require'nvim-autopairs'.setup {}
 
 require'gitsigns'.setup {
@@ -555,14 +542,6 @@ vim.api.nvim_create_autocmd(
 )
 
 local map = vim.keymap.set
-local harpoon = require'harpoon'
-map("n", "<C-h>", function() harpoon:list():select(1) end)
-map("n", "<C-t>", function() harpoon:list():select(2) end)
-map("n", "<C-n>", function() harpoon:list():select(3) end)
-map("n", "<C-s>", function() harpoon:list():select(4) end)
-map("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-map("n", "<leader>a", function() harpoon:list():add() end)
-map("n", "<leader>A", function() harpoon:list():prepend() end)
 map('n', '<leader>ff', require'telescope.builtin'.find_files, { desc = 'Telescope find files' })
 map("n", "<leader>fg", function() live_multigrep(require'telescope.themes'.get_ivy { border = false }) end)
 map({ 'n', 'v' }, "<leader>tg", require'telescope.builtin'.grep_string)
@@ -590,6 +569,13 @@ map('n', '<leader>qs', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false 
 
 vim.cmd("set completeopt+=noselect")
 
+-- Change the color of the folds
+vim.cmd("highlight Folded guifg=#b7c1e3 guibg=#2D3047")
+local ok, _ = pcall(vim.cmd, 'colorscheme onedark')
+if not ok then
+  vim.cmd 'colorscheme default'
+end
+
 -- vim.api.nvim_create_autocmd("LspAttach", {
 -- 	callback = function(ev)
 -- 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -615,7 +601,6 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.formatoptions:remove({ "c", "r", "o" })
 	end,
 })
-
 -- ide like highlight when stopping cursor
 vim.api.nvim_create_autocmd("CursorMoved", {
 	group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
@@ -639,7 +624,6 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 		end
 	end,
 })
-
 -- ide like highlight when stopping cursor
 vim.api.nvim_create_autocmd("CursorMovedI", {
 	group = "LspReferenceHighlight",
@@ -649,15 +633,4 @@ vim.api.nvim_create_autocmd("CursorMovedI", {
 	end,
 })
 
-function SetColorScheme()
-    -- vim.cmd.colorscheme  '...'
-    local color_scheme = 'tokyonight-night'
-    vim.cmd('colorscheme '  .. color_scheme)
-end
--- vim.api.nvim_create_user_command('SetColorScheme', SetColorScheme, {})
---
-SetColorScheme()
-
--- Change the color of the folds
-vim.cmd("highlight Folded guifg=#b7c1e3 guibg=#2D3047")
 
