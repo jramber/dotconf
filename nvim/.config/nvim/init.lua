@@ -467,7 +467,7 @@ require'telescope'.setup {
 }
 require'telescope'.load_extension('fzf')
 
--- This functions is based on TJ's video: https://www.youtube.com/watch?v=xdXE1tOT-qg&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=10
+-- This functions is based on TJ's video: https://www.youtube.com/watch?v=xdXE1tOT-qg&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM
 local pickers = require'telescope.pickers'
 local finders = require'telescope.finders'
 local make_entry = require'telescope.make_entry'
@@ -567,8 +567,10 @@ map("n", "<leader>h", ":split<CR>")
 -- Move selection up and down
 map("v", "<C-Down>", ":m '>+1<CR>gv=gv")
 map("v", "<C-Up>", ":m '<-2<CR>gv=gv")
-
-map('n', '<leader>qs', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
+-- Document symbols to quickfix
+map('n', '<leader>ds', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
+map('n', '<leader>dia', '<cmd>:lua vim.diagnostic.setqflist({ buffer = 0 })<CR>', { noremap = true, silent = true })
+-- map('n', '<leader>td', require'telescope.builtin.diagnostics', { desc = 'Telescope diagnostics' })
 
 vim.cmd("set completeopt+=noselect")
 
