@@ -469,6 +469,9 @@ require'telescope'.setup {
         find_files = {
             theme = "ivy",
             border = false
+        },
+        colorscheme = {
+            enable_preview = true
         }
     },
     extensions = {
