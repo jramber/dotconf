@@ -466,11 +466,14 @@ require'telescope'.setup {
     }
 }
 require'telescope'.load_extension('fzf')
+
+-- This functions is based on TJ's video: https://www.youtube.com/watch?v=xdXE1tOT-qg&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=10
 local pickers = require'telescope.pickers'
 local finders = require'telescope.finders'
 local make_entry = require'telescope.make_entry'
 local conf = require'telescope.config'.values
 local git_command = require'telescope.utils'.__git_command
+
 local live_multigrep = function(opts)
     opts = opts or {}
     opts.cwd = opts.cwd or vim.uv.cwd()
@@ -481,7 +484,7 @@ local live_multigrep = function(opts)
                 return nil
             end
 
-            local pieces = vim.split(prompt, "  ")
+            local pieces = vim.split(prompt, "  ") -- two spaces
             local args = { "rg" }
 
             if pieces[1] then
