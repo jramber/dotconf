@@ -568,7 +568,7 @@ vim.cmd("set completeopt+=noselect")
 
 -- Change the color of the folds
 vim.cmd("highlight Folded guifg=#b7c1e3 guibg=#2D3047")
-local ok, _ = pcall(vim.cmd, 'colorscheme onedark')
+local ok, _ = pcall(vim.cmd, 'colorscheme github_dark_default')
 if not ok then
   vim.cmd 'colorscheme default'
 end
