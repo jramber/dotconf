@@ -67,17 +67,16 @@ vim.pack.add {
     { src = 'https://github.com/kdheepak/lazygit.nvim' },
     -- Docker
     -- 'https://github.com/jesseduffield/lazydocker'
-    -- Quickfix
-    -- { src = 'https://github.com/stevearc/quicker.nvim' },
-    -- surround
-    { src = "https://github.com/kylechui/nvim-surround" }
+    { src = "https://github.com/kylechui/nvim-surround" },
+    -- Zen mode
+    { src = 'https://github.com/svampkorg/zenfocus.nvim' },
 }
 
 require'onedark'.setup {
     style = 'darker'
 }
 
--- require'quicker'.setup {}
+require'focus'.setup {}
 
 require'nvim-autopairs'.setup {}
 
@@ -571,6 +570,9 @@ map("v", "<C-Up>", ":m '<-2<CR>gv=gv")
 map('n', '<leader>ds', '<cmd>:lua vim.lsp.buf.document_symbol({ loclist = false })<CR>', { noremap = true, silent = true })
 map('n', '<leader>dia', '<cmd>:lua vim.diagnostic.setqflist({ buffer = 0 })<CR>', { noremap = true, silent = true })
 -- map('n', '<leader>td', require'telescope.builtin.diagnostics', { desc = 'Telescope diagnostics' })
+-- Zen mode
+map('n', '<leader>Zf', ':Focus<CR>')
+map('v', '<leader>Zn', ":'<,'>Narrow<CR>")
 
 vim.cmd("set completeopt+=noselect")
 
@@ -637,5 +639,4 @@ vim.api.nvim_create_autocmd("CursorMovedI", {
 		vim.lsp.buf.clear_references()
 	end,
 })
-
 
