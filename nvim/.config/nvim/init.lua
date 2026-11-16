@@ -111,17 +111,6 @@ require'nvim-treesitter'.install {
     'vimdoc',
 }
 
-
--- require("mason").setup()
--- require("mason-lspconfig").setup({})
--- require("mason-tool-installer").setup({
---   ensure_installed = {
---     "lua_ls",
---   },
---   auto_update = false,
---   run_on_start = true,
--- })
-
 vim.lsp.config('*', {
     capabilities = require('blink.cmp').get_lsp_capabilities(),
     root_markers = { '.git' }
@@ -413,6 +402,7 @@ vim.lsp.config('rust-analyzer', {
 })
 vim.lsp.enable({'luals', 'ts_ls', 'marksman', 'pyright', 'rust_analyzer'})
 
+-- TODO: keep cleaning
 require("luasnip.loaders.from_vscode").lazy_load()
 require'blink.cmp'.setup {
     snippets = { preset = "luasnip" },
