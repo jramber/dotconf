@@ -1,12 +1,12 @@
-console_title_template = '{{ .Shell }} in {{ .Folder }}'
-version = 3
+# console_title_template = '{{ .Shell }} in {{ .Folder }}'
+version = 4
 final_space = true
 
 [upgrade]
   source = 'cdn'
   interval = '168h'
   auto = false
-  notice = false
+  notice = true
 
 [[blocks]]
   type = 'prompt'
@@ -15,29 +15,23 @@ final_space = true
   [[blocks.segments]]
     type = 'session'
     template = "{{ .UserName }}@{{ .HostName }}"
-    style = 'powerline'
-    powerline_symbol = ''
-    leading_powerline_symbol = '█'
-    background = 'p:blue'
-    foreground = 'p:background'
+    style = 'plain'
+    foreground = 'p:color4'
 
   [[blocks.segments]]
     type = 'path'
-    style = 'powerline'
-    powerline_symbol = ''
-    background = 'p:lavender'
-    foreground = 'p:background'
+    style = 'plain'
+    foreground = 'p:foreground'
 
     [blocks.segments.properties]
-        style = 'full'
+        style = 'agnoster_short'
+        max_depth = 2
 
   [[blocks.segments]]
     type = 'text'
-    style = 'powerline'
-    powerline_symbol = ''
+    style = 'plain'
     template = '{{ if .Env.TMUX }}tmux{{ end }}'
-    background = 'p:mauve'
-    foreground = 'p:background'
+    foreground = '#C092FA'
 
 [[blocks]]
     type = 'rprompt'
@@ -45,24 +39,42 @@ final_space = true
 
     [[blocks.segments]]
         type = 'git'
-        style = 'powerline'
-        powerline_symbol = '█'
-        leading_powerline_symbol = ''
-        foreground = 'p:background'
-        background = 'p:pink'
+        style = 'plain'
+        foreground = 'p:color1'
         template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} @{{ printf "%.7s" .Commit.Sha }}'
-        
+
         [blocks.segments.properties]
             branch_icon = ''
             commit_icon = '@'
             fetch_status = true
-    
+
 
 [palette]
-    os = "#ACB0BE"
-    closer = "p:os"
-    pink = "#f4b8e4"
-    lavender = "#B4BEFE"
-    blue = "#89B4FA"
-    mauve = '#cba6f7'
-    background = "#1e1e2e"
+    background = "#191A1C"
+    foreground = "#BCBEC4"
+    selection_background = "#25324D"
+    selection_foreground = "#BCBEC4"
+    cursor = "#CED0D6"
+    cursor_text_color = "#1E1F22"
+    macos_titlebar_color = "system"
+    color0  = "#000000"
+    color1  = "#F27481"
+    color2  = "#6BCC62"
+    color3  = "#E0CE70"
+    color4  = "#5594FA"
+    color5  = "#C092FA"
+    color6  = "#47CCBD"
+    color7  = "#CED0D6"
+    color8  = "#4E5157"
+    color9  = "#FF6B7A"
+    color10 = "#67FF59"
+    color11 = "#FFEC1A"
+    color12 = "#3399FF"
+    color13 = "#D970FF"
+    color14 = "#40FFE9"
+    color15 = "#FFFFFF"
+    active_tab_foreground = "#BCBEC4"
+    active_tab_background = "#191A1C"
+    inactive_tab_foreground = "#BCBEC4"
+    inactive_tab_background = "#1E1F22"
+    tab_bar_background = "#1E1F22"
