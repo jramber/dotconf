@@ -57,10 +57,11 @@ vim.pack.add {
     { src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim', version = 'main' }, -- dependency
     'https://github.com/nvim-telescope/telescope.nvim',
     -- Themes
-    { src = 'https://github.com/navarasu/onedark.nvim' },
-    { src = 'https://github.com/folke/tokyonight.nvim' },
-    { src = 'https://github.com/catppuccin/nvim' },
+    -- { src = 'https://github.com/navarasu/onedark.nvim' },
+    -- { src = 'https://github.com/folke/tokyonight.nvim' },
+    -- { src = 'https://github.com/catppuccin/nvim' },
     { src = 'https://github.com/projekt0n/github-nvim-theme' },
+    { src = 'https://github.com/nickkadutskyi/jb.nvim', version = 'main' },
     -- Git
     { src = 'https://github.com/lewis6991/gitsigns.nvim' },
     { src = 'https://github.com/tpope/vim-fugitive' },
@@ -72,9 +73,11 @@ vim.pack.add {
     { src = 'https://github.com/svampkorg/zenfocus.nvim' },
 }
 
-require'onedark'.setup {
-    style = 'darker'
-}
+--[[
+    require'onedark'.setup {
+        style = 'darker'
+    }
+]]
 
 require'focus'.setup {}
 
